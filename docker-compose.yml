@@ -1,0 +1,9 @@
+services:
+  bsky-sync:
+    build: .
+    container_name: bsky-sync
+    init: true
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data

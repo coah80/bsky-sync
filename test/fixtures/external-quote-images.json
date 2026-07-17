@@ -1,0 +1,38 @@
+{
+  "id": "1004",
+  "text": "worth reading https://t.co/imagequote",
+  "created_at": "Wed Jul 15 18:34:00 +0000 2026",
+  "user": {
+    "id": "100",
+    "name": "Example User",
+    "username": "example"
+  },
+  "urls": [
+    {
+      "url": "https://t.co/imagequote",
+      "expanded_url": "https://x.com/designer/status/700"
+    }
+  ],
+  "media": [],
+  "quoting": {
+    "id": "700",
+    "text": "A small offline fixture for the quote card. It includes an image, a real timestamp, and enough text to verify wrapping.",
+    "created_at": "Tue Jul 14 18:05:00 +0000 2026",
+    "user": {
+      "id": "300",
+      "name": "Fixture Designer",
+      "username": "designer",
+      "profile_picture": {
+        "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%235f6b5d'/%3E%3Ccircle cx='48' cy='38' r='18' fill='%23d8d4ca'/%3E%3Cpath d='M15 96c4-24 16-36 33-36s29 12 33 36' fill='%23d8d4ca'/%3E%3C/svg%3E"
+      }
+    },
+    "urls": [],
+    "media": [
+      {
+        "type": "photo",
+        "media_url_https": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='540'%3E%3Crect width='960' height='540' fill='%23252a27'/%3E%3Crect x='90' y='85' width='780' height='370' rx='12' fill='%23b9a47a'/%3E%3Cpath d='M90 390l210-170 170 130 130-100 270 205H90z' fill='%23586255'/%3E%3Ccircle cx='700' cy='180' r='55' fill='%23efe5c9'/%3E%3C/svg%3E",
+        "ext_alt_text": "A simple landscape fixture"
+      }
+    ]
+  }
+}

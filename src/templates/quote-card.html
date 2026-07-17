@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: #000; color: #e7e9ea; }
+      body { padding: 24px; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
+      #quote-card { width: 600px; padding: 20px; border: 1px solid #2f3336; border-radius: 12px; background: #000; }
+      .identity { display: flex; align-items: center; gap: 12px; }
+      .avatar { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 50%; object-fit: cover; background: #202327; }
+      .names { min-width: 0; line-height: 1.2; }
+      .name { overflow: hidden; color: #f2f2f2; font-size: 17px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+      .handle { margin-top: 3px; overflow: hidden; color: #71767b; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+      .text { margin: 16px 0 0; color: #e7e9ea; font-size: 20px; line-height: 1.35; overflow-wrap: anywhere; white-space: pre-wrap; }
+      .media { display: grid; gap: 2px; margin-top: 16px; overflow: hidden; border: 1px solid #2f3336; border-radius: 12px; background: #16181c; }
+      .media.one { grid-template-columns: 1fr; }
+      .media.two, .media.four { grid-template-columns: 1fr 1fr; }
+      .media.three { grid-template-columns: 1fr 1fr; }
+      .media img { width: 100%; height: 220px; display: block; object-fit: cover; background: #16181c; }
+      .media.one img { height: auto; max-height: 440px; }
+      .media.three img:first-child { grid-row: span 2; height: 442px; }
+      .date { margin-top: 16px; color: #71767b; font-size: 15px; line-height: 1.3; }
+    </style>
+  </head>
+  <body>
+    <article id="quote-card">
+      <div class="identity">
+        <img class="avatar" src="{{AVATAR}}" alt="">
+        <div class="names">
+          <div class="name">{{NAME}}</div>
+          <div class="handle">@{{HANDLE}}</div>
+        </div>
+      </div>
+      <div class="text">{{TEXT}}</div>
+      {{MEDIA}}
+      <div class="date">{{DATE}}</div>
+    </article>
+  </body>
+</html>
+

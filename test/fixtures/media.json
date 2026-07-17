@@ -1,0 +1,20 @@
+{
+  "id": "1001",
+  "text": "photo post https://t.co/photo",
+  "created_at": "Wed Jul 15 18:31:00 +0000 2026",
+  "user": {
+    "id": "100",
+    "name": "Example User",
+    "username": "example"
+  },
+  "urls": [],
+  "media": [
+    {
+      "url": "https://t.co/photo",
+      "media_url_https": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect width='800' height='450' fill='%23636363'/%3E%3C/svg%3E",
+      "type": "photo",
+      "ext_alt_text": "A gray fixture image"
+    }
+  ],
+  "quoting": null
+}

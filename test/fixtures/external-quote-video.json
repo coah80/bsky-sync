@@ -1,0 +1,48 @@
+{
+  "id": "1003",
+  "text": "watch this https://t.co/videoquote",
+  "created_at": "Wed Jul 15 18:33:00 +0000 2026",
+  "user": {
+    "id": "100",
+    "name": "Example User",
+    "username": "example"
+  },
+  "urls": [
+    {
+      "url": "https://t.co/videoquote",
+      "expanded_url": "https://x.com/other/status/800"
+    }
+  ],
+  "media": [],
+  "quoting": {
+    "id": "800",
+    "text": "fixture video",
+    "created_at": "Tue Jul 14 17:00:00 +0000 2026",
+    "user": {
+      "id": "200",
+      "name": "Other Person",
+      "username": "other"
+    },
+    "urls": [],
+    "media": [
+      {
+        "type": "video",
+        "video_info": {
+          "aspect_ratio": [16, 9],
+          "variants": [
+            {
+              "bitrate": 256000,
+              "content_type": "video/mp4",
+              "url": "data:video/mp4;base64,AAAA"
+            },
+            {
+              "bitrate": 832000,
+              "content_type": "video/mp4",
+              "url": "data:video/mp4;base64,AAAAAA=="
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

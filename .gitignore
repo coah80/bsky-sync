@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/
+*.db
+docs/
+scripts/
+*.tgz
+.claude/
+.agents/

@@ -1,0 +1,14 @@
+{
+  "id": "1007",
+  "text": "RT @other: a reposted tweet",
+  "created_at": "Wed Jul 15 18:37:00 +0000 2026",
+  "user": {
+    "id": "200",
+    "name": "Other Person",
+    "username": "other"
+  },
+  "urls": [],
+  "media": [],
+  "quoting": null
+}
+

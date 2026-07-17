@@ -1,0 +1,29 @@
+{
+  "id": "1002",
+  "text": "bringing this back https://t.co/selfquote",
+  "created_at": "Wed Jul 15 18:32:00 +0000 2026",
+  "user": {
+    "id": "100",
+    "name": "Example User",
+    "username": "example"
+  },
+  "urls": [
+    {
+      "url": "https://t.co/selfquote",
+      "expanded_url": "https://x.com/example/status/900"
+    }
+  ],
+  "media": [],
+  "quoting": {
+    "id": "900",
+    "text": "an older synced post",
+    "created_at": "Tue Jul 14 16:00:00 +0000 2026",
+    "user": {
+      "id": "100",
+      "name": "Example User",
+      "username": "example"
+    },
+    "urls": [],
+    "media": []
+  }
+}

@@ -1,0 +1,11 @@
+node_modules
+.git
+data
+.env
+.env.*
+docs
+scripts
+*.md
+.claude
+.agents
+*.tgz

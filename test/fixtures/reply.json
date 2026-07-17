@@ -1,0 +1,36 @@
+{
+  "self_reply": {
+    "id": "1005",
+    "text": "continuing my thread",
+    "created_at": "Wed Jul 15 18:35:00 +0000 2026",
+    "conversation_id": "950",
+    "in_reply_to_status_id": "1000",
+    "in_reply_to_user_id": "100",
+    "in_reply_to_screen_name": "example",
+    "user": {
+      "id": "100",
+      "name": "Example User",
+      "username": "example"
+    },
+    "urls": [],
+    "media": [],
+    "quoting": null
+  },
+  "other_reply": {
+    "id": "1006",
+    "text": "replying elsewhere",
+    "created_at": "Wed Jul 15 18:36:00 +0000 2026",
+    "conversation_id": "600",
+    "in_reply_to_status_id": "600",
+    "in_reply_to_user_id": "200",
+    "in_reply_to_screen_name": "other",
+    "user": {
+      "id": "100",
+      "name": "Example User",
+      "username": "example"
+    },
+    "urls": [],
+    "media": [],
+    "quoting": null
+  }
+}
