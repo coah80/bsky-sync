@@ -2,7 +2,7 @@
 
 mirrors your twitter/x account to bluesky so you can be active there without opening the app. reads your tweets through [emusks](https://emusks.tiago.zip/), posts them to bluesky, and keeps a sqlite db of tweet id → bluesky post mappings so threads and self quotes can sync up nicely with a little bow on top 🎀.
 
-syncs tweets, media, self quotes, self replies, deletions, and profile changes. quotes of other people get attached as a screenshot card, or the video if thats what got quoted. retweets and replies to other people are skipped. no backfill, it starts at your newest tweet.
+syncs tweets, media, self quotes, self replies, deletions, and profile changes. quotes of other people get attached as a screenshot card, and if the quoted tweet has a video the card becomes a video with the clip playing inside it. retweets and replies to other people are skipped. no backfill, it starts at your newest tweet.
 
 ## setup
 

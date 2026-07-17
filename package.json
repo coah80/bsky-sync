@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test test/text.test.js test/classify.test.js test/deletions.test.js test/profile.test.js test/splitting.test.js test/thread.test.js test/health.test.js"
+    "test": "node --test test/text.test.js test/classify.test.js test/deletions.test.js test/profile.test.js test/splitting.test.js test/thread.test.js test/health.test.js test/video-card.test.js"
   },
   "dependencies": {
     "@atproto/api": "0.20.29",

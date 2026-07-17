@@ -1,4 +1,6 @@
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { spawn } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loginBluesky, publishTweet } from "./bsky.js";
@@ -8,7 +10,11 @@ import { syncDeletedTweets } from "./deletions.js";
 import { createHealthMonitor } from "./health.js";
 import { sendToast } from "./notify.js";
 import { syncProfile } from "./profile.js";
-import { closeRenderer, renderQuoteCard } from "./screenshot.js";
+import {
+  closeRenderer,
+  renderQuoteCard,
+  renderQuoteCardWithVideoSlot,
+} from "./screenshot.js";
 import {
   classifyTweet,
   fetchNewTweetsSince,
@@ -17,9 +23,41 @@ import {
   newestTweetId,
   resolveOwnUser,
 } from "./twitter.js";
+import { composeQuoteVideo, ffmpegAvailable } from "./video-card.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+function generateRenderTestClip(outputPath) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(
+      "ffmpeg",
+      [
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc=duration=2:size=640x360:rate=24",
+        "-pix_fmt",
+        "yuv420p",
+        outputPath,
+      ],
+      { windowsHide: true, stdio: ["ignore", "ignore", "pipe"] },
+    );
+    let stderr = "";
+    child.stderr.on("data", (chunk) => {
+      stderr = `${stderr}${chunk}`.slice(-4000);
+    });
+    child.once("error", reject);
+    child.once("close", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(new Error(stderr.slice(-500).trim() || `ffmpeg exited with code ${code}`));
+    });
+  });
+}
 
 function parseFlags(argv) {
   const supported = new Set(["--once", "--dry-run", "--render-test"]);
@@ -44,6 +82,36 @@ async function runRenderTest() {
   const info = await stat(outputPath);
   console.log(`Rendered quote card: ${outputPath}`);
   console.log(`PNG bytes: ${info.size}`);
+  if (await ffmpegAvailable()) {
+    const temporaryDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "bsky-render-test-"),
+    );
+    try {
+      const testClipPath = path.join(temporaryDirectory, "test-clip.mp4");
+      const videoOutputPath = path.join(
+        projectRoot,
+        "test",
+        "fixtures",
+        "quote-card-video-sample.mp4",
+      );
+      await generateRenderTestClip(testClipPath);
+      const testClip = await readFile(testClipPath);
+      const card = await renderQuoteCardWithVideoSlot(
+        fixture.quoting ?? fixture,
+        { width: 16, height: 9 },
+      );
+      const video = await composeQuoteVideo(card.png, testClip, card.slot);
+      await mkdir(path.dirname(videoOutputPath), { recursive: true });
+      await writeFile(videoOutputPath, video);
+      const videoInfo = await stat(videoOutputPath);
+      console.log(`Rendered quote card video: ${videoOutputPath}`);
+      console.log(`MP4 bytes: ${videoInfo.size}`);
+    } finally {
+      await rm(temporaryDirectory, { recursive: true, force: true });
+    }
+  } else {
+    console.log("render test: ffmpeg not available, skipping video card sample");
+  }
   await closeRenderer();
 }
 

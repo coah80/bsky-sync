@@ -1,4 +1,5 @@
 import { BskyAgent, RichText } from "@atproto/api";
+import sharp from "sharp";
 import {
   VideoTooLargeError,
   downloadAsset,
@@ -7,13 +8,17 @@ import {
   originalImageUrl,
   prepareImage,
 } from "./media.js";
-import { renderQuoteCard } from "./screenshot.js";
+import {
+  renderQuoteCard,
+  renderQuoteCardWithVideoSlot,
+} from "./screenshot.js";
 import {
   graphemeLength,
   prepareTweetText,
   sliceGraphemes,
   splitTextForBsky,
 } from "./text.js";
+import { composeQuoteVideo, ffmpegAvailable } from "./video-card.js";
 
 const sleep = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -149,6 +154,25 @@ async function buildQuoteScreenshotEmbed(agent, quotedTweet, dryRun) {
   return { $type: "app.bsky.embed.images", images: [image] };
 }
 
+async function buildQuoteVideoCardEmbed(agent, quotedTweet, media, dryRun) {
+  const asset = await downloadVideo(media);
+  const card = await renderQuoteCardWithVideoSlot(
+    quotedTweet,
+    mediaAspectRatio(media),
+  );
+  if (!(await ffmpegAvailable())) {
+    throw new Error("ffmpeg is not installed");
+  }
+  const composed = await composeQuoteVideo(card.png, asset.buffer, card.slot);
+  const blob = await uploadBlob(agent, composed, "video/mp4", dryRun);
+  const metadata = await sharp(card.png).metadata();
+  return {
+    $type: "app.bsky.embed.video",
+    video: blob,
+    aspectRatio: { width: metadata.width, height: metadata.height },
+  };
+}
+
 async function buildRichText(agent, text) {
   const richText = new RichText({ text });
   await richText.detectFacets(agent);
@@ -192,6 +216,8 @@ export async function buildBlueskyPost(
 ) {
   const dryRun = options.dryRun ?? false;
   const logger = options.logger ?? console.log;
+  const composeQuoteVideoCard =
+    options.composeQuoteVideoCard ?? buildQuoteVideoCardEmbed;
   const ownMediaPresent = (tweet?.media?.length ?? 0) > 0;
   const quotedTweet = tweet?.quoting ?? null;
   const mappedQuote = quoteMapping(tweet, ownUserId, database);
@@ -225,7 +251,31 @@ export async function buildBlueskyPost(
       text = appendQuoteAttribution(text, quotedTweet);
     } else {
       const quotedVideo = (quotedTweet.media ?? []).find(isVideo);
-      if (quotedVideo) {
+      if (quotedVideo?.type === "video") {
+        try {
+          embed = await composeQuoteVideoCard(
+            agent,
+            quotedTweet,
+            quotedVideo,
+            dryRun,
+          );
+        } catch (error) {
+          logger(
+            `[tweet ${tweet.id}] video quote card failed (${error?.message ?? String(error)}); posting raw quoted video`,
+          );
+          text = appendQuoteAttribution(text, quotedTweet);
+          try {
+            embed = await buildVideoEmbed(agent, quotedVideo, dryRun);
+          } catch (fallbackError) {
+            if (fallbackError instanceof VideoTooLargeError) {
+              logger(`[tweet ${tweet.id}] quoted video exceeds 100MB; using screenshot card`);
+              embed = await buildQuoteScreenshotEmbed(agent, quotedTweet, dryRun);
+            } else {
+              throw fallbackError;
+            }
+          }
+        }
+      } else if (quotedVideo) {
         text = appendQuoteAttribution(text, quotedTweet);
         try {
           embed = await buildVideoEmbed(agent, quotedVideo, dryRun);

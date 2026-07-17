@@ -93,28 +93,75 @@ async function buildMediaMarkup(tweet) {
     .join("")}</div>`;
 }
 
-export async function renderQuoteCard(quotedTweet) {
+async function buildQuoteCardHtml(quotedTweet, mediaPromise) {
   const [template, avatar, media] = await Promise.all([
     readFile(templatePath, "utf8"),
     inlineAsset(quotedTweet?.user?.profile_picture?.url, placeholderAvatar),
-    buildMediaMarkup(quotedTweet),
+    mediaPromise,
   ]);
-  const html = template
+  return template
     .replace("{{AVATAR}}", avatar)
     .replace("{{NAME}}", escapeHtml(quotedTweet?.user?.name ?? "Unknown user"))
     .replace("{{HANDLE}}", escapeHtml(quotedTweet?.user?.username ?? "unknown"))
     .replace("{{TEXT}}", escapeHtml(prepareTweetText(quotedTweet)))
     .replace("{{MEDIA}}", media)
     .replace("{{DATE}}", escapeHtml(formatDate(quotedTweet?.created_at)));
+}
 
+async function createQuoteCardPage() {
   const browser = await getBrowser();
-  const page = await browser.newPage({
+  return browser.newPage({
     viewport: { width: 680, height: 1200 },
     deviceScaleFactor: 2,
   });
+}
+
+function roundToNearestEven(value) {
+  return Math.round(value / 2) * 2;
+}
+
+export async function renderQuoteCard(quotedTweet) {
+  const html = await buildQuoteCardHtml(
+    quotedTweet,
+    buildMediaMarkup(quotedTweet),
+  );
+
+  const page = await createQuoteCardPage();
   try {
     await page.setContent(html, { waitUntil: "load" });
     return await page.locator("#quote-card").screenshot({ type: "png" });
+  } finally {
+    await page.close();
+  }
+}
+
+export async function renderQuoteCardWithVideoSlot(quotedTweet, aspectRatio) {
+  const ratioStyle = aspectRatio
+    ? `aspect-ratio: ${aspectRatio.width} / ${aspectRatio.height}; `
+    : "";
+  const media = `<div class="media one" id="video-slot" style="${ratioStyle}background: #16181c; min-height: 220px;"></div>`;
+  const html = await buildQuoteCardHtml(quotedTweet, Promise.resolve(media));
+
+  const page = await createQuoteCardPage();
+  try {
+    await page.setContent(html, { waitUntil: "load" });
+    const png = await page.locator("#quote-card").screenshot({ type: "png" });
+    const [slotBox, cardBox] = await Promise.all([
+      page.locator("#video-slot").boundingBox(),
+      page.locator("#quote-card").boundingBox(),
+    ]);
+    if (!slotBox || !cardBox) {
+      throw new Error("Quote card video slot could not be measured");
+    }
+    return {
+      png,
+      slot: {
+        x: roundToNearestEven((slotBox.x - cardBox.x) * 2),
+        y: roundToNearestEven((slotBox.y - cardBox.y) * 2),
+        width: roundToNearestEven(slotBox.width * 2),
+        height: roundToNearestEven(slotBox.height * 2),
+      },
+    };
   } finally {
     await page.close();
   }
