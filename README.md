@@ -2,18 +2,7 @@
 
 mirrors your twitter/x account to bluesky so you can be active there without opening the app. reads your tweets through [emusks](https://emusks.tiago.zip/), posts them to bluesky, and keeps a sqlite db of tweet id → bluesky post mappings so threads and self quotes can sync up nicely with a little bow on top 🎀.
 
-## what it syncs
-
-- normal tweets, text goes over as is, long ones get split into a reply chain
-- images (up to 4, same as bluesky's cap) and videos, gifs post as gifs
-- quote tweets of YOURSELF become real bluesky quote posts, pointing at the already-mirrored post
-- quote tweets of other people get rendered into a screenshot card (headless chromium) and attached as an image, and if the quoted tweet has a video it uploads the video instead
-- replies to YOURSELF thread onto the mirrored parent on bluesky, replies to other people are skipped
-- retweets are skipped
-- deleting a tweet deletes the mirrored bluesky post on the next poll
-- profile stuff: avatar, banner, bio, display name, and pinned tweet all follow twitter when they change
-
-first run sets a baseline at your newest tweet and only syncs stuff after that, no backfill.
+syncs tweets, media, self quotes, self replies, deletions, and profile changes. quotes of other people get attached as a screenshot card, or the video if thats what got quoted. retweets and replies to other people are skipped. no backfill, it starts at your newest tweet.
 
 ## setup
 
@@ -23,7 +12,7 @@ you need two credentials, both go in `.env`:
 cp .env.example .env
 ```
 
-**twitter auth token** — sign in at x.com, hit F12, Application tab, Cookies, `https://x.com`, copy the `auth_token` cookie value into `TWITTER_AUTH_TOKEN`. set `TWITTER_USERNAME` to your handle without the @. the syncer is read only on the twitter side.
+**twitter auth token** — sign in at x.com, hit F12, Application tab, Cookies, `https://x.com`, copy the `auth_token` cookie value into `TWITTER_AUTH_TOKEN`. set `TWITTER_USERNAME` to your handle without the @. the syncer is read only on the twitter side. twitter invalidates this token on password changes, logouts, and sometimes for no visible reason, if login starts failing grab a fresh cookie.
 
 **bluesky app password** — bluesky settings, Privacy and Security, App Passwords, make one, put it in `BSKY_APP_PASSWORD`. set `BSKY_HANDLE` to your full handle (like `you.bsky.social`). dont use your main password, app passwords are revokable.
 
@@ -76,11 +65,3 @@ npm test
 ```
 
 or in docker: `docker compose run --rm bsky-sync npm test`
-
-## behavior notes
-
-- one failing tweet wont block the rest, it retries a tweet 3 times, logs a give-up line, and moves on
-- polls are capped at 20 posts each so a weird api response cant flood your bluesky
-- tweet timestamps are preserved, mirrored posts show the original tweet time
-- if you reply to or quote a tweet from before the baseline, theres no mapping for it, replies post standalone and quotes fall back to the screenshot card
-- twitter invalidates auth tokens on password changes, logouts, and sometimes for no visible reason. if login starts failing, grab a fresh cookie from your browser
