@@ -11,7 +11,7 @@ RUN npx playwright install --with-deps chromium
 COPY src ./src
 COPY test ./test
 
-RUN mkdir -p /app/data && chown -R node:node /app/data /ms-playwright
+RUN mkdir -p /app/data && chown -R node:node /app/data /app/test/fixtures /ms-playwright
 
 ENV CHROMIUM_DISABLE_SANDBOX=1
 
