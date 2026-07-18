@@ -1,0 +1,17 @@
+{
+  "name": "bsky-sync-labeler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Labeler service that badges accounts mirrored with bsky-sync",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@skyware/labeler": "0.2.0",
+    "dotenv": "17.4.2"
+  }
+}

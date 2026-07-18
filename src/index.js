@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises"
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { registerSyncBadge } from "./badge.js";
 import { loginBluesky, publishTweet } from "./bsky.js";
 import { loadConfig } from "./config.js";
 import { SyncDatabase } from "./db.js";
@@ -282,6 +283,11 @@ async function start() {
       database.setMeta("own_user_id", ownUserId);
     }
     const bluesky = await runStartupStep(() => loginBluesky(config));
+    await registerSyncBadge(bluesky, database, {
+      enabled: config.badgeEnabled,
+      badgeServerUrl: config.badgeServerUrl,
+      dryRun: flags.dryRun,
+    });
     const context = { flags, config, database, twitter, bluesky, ownUserId };
 
     if (flags.once) {

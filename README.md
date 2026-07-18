@@ -26,6 +26,10 @@ cp .env.example .env
 
 optional: `POLL_INTERVAL_SECONDS` (default 180) and `BSKY_SERVICE` if youre not on bsky.social.
 
+## the badge
+
+on startup the syncer registers your account with the bsky-sync [labeler](labeler/) so you get a `bsky-sync` badge on your profile. all it sends is your bluesky DID plus a signed token proving its you — no tweets, no credentials. only people [subscribed to the labeler](https://bsky.app/profile/labeler.coah80.com) see the badge, and if the labeler is unreachable the sync just carries on without it. dont want it? `SYNC_BADGE=off` in `.env`.
+
 ## run it (docker)
 
 ```

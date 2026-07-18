@@ -1,0 +1,11 @@
+services:
+  bsky-sync-labeler:
+    build: .
+    container_name: bsky-sync-labeler
+    init: true
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "14831:14831"
+    volumes:
+      - ./data:/app/data

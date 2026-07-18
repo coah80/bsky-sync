@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { DEFAULT_BADGE_SERVER_URL } from "./badge.js";
 
 const requiredKeys = [
   "TWITTER_AUTH_TOKEN",
@@ -31,6 +32,18 @@ export function loadConfig(env = process.env) {
     throw new Error("BSKY_SERVICE must be a valid URL");
   }
 
+  const badgeEnabled = !["off", "false", "0", "no"].includes(
+    (env.SYNC_BADGE ?? "").trim().toLowerCase(),
+  );
+  let badgeServerUrl;
+  try {
+    badgeServerUrl = new URL(
+      env.BADGE_SERVER_URL?.trim() || DEFAULT_BADGE_SERVER_URL,
+    ).toString();
+  } catch {
+    throw new Error("BADGE_SERVER_URL must be a valid URL");
+  }
+
   return {
     twitterAuthToken: env.TWITTER_AUTH_TOKEN.trim(),
     twitterUsername: env.TWITTER_USERNAME.trim().replace(/^@/, ""),
@@ -38,6 +51,8 @@ export function loadConfig(env = process.env) {
     bskyAppPassword: env.BSKY_APP_PASSWORD.trim(),
     bskyService,
     pollIntervalSeconds,
+    badgeEnabled,
+    badgeServerUrl,
   };
 }
 
